@@ -109,6 +109,18 @@ class Industria_members_map_Admin {
 
 	}
 
+    private function fromSeconds($seconds) {
+        $dt1 = new DateTime("@0");
+        $dt2 = new DateTime("@$seconds");
+        if ( $seconds < 86400 ) {
+            if ( $seconds < 3600 ) {
+                return $dt1->diff($dt2)->format('%i minutes');
+            }
+            return $dt1->diff($dt2)->format('%h hours, %i minutes');
+        }
+        return $dt1->diff($dt2)->format('%a days, %h hours, %i minutes');
+    }
+
 	public function sample_admin_notice__success() {
 		$screen = get_current_screen();
 		// Only render this notice in the post editor.
@@ -217,6 +229,14 @@ class Industria_members_map_Admin {
 			'members-map-configuration-admin', // page
 			'members_map_configuration_setting_section' // section
 		);
+
+		add_settings_field(
+			'force_refresh', // id
+			'Force Data Refresh', // title
+			array( $this, 'force_refresh_callback' ), // callback
+			'members-map-configuration-admin', // page
+			'members_map_configuration_setting_section' // section
+		);
 	}
 
 	public function members_map_configuration_sanitize($input) {
@@ -247,6 +267,10 @@ class Industria_members_map_Admin {
 
 		if ( isset( $input['mouse_scroll_wheel_for_map_zoom'] ) ) {
 			$sanitary_values['mouse_scroll_wheel_for_map_zoom'] = $input['mouse_scroll_wheel_for_map_zoom'];
+		}
+
+		if ( isset( $input['force_refresh'] ) ) {
+			$sanitary_values['force_refresh'] = $input['force_refresh'];
 		}
 
 		return $sanitary_values;
@@ -315,6 +339,22 @@ class Industria_members_map_Admin {
 			'<input type="checkbox" name="members_map_configuration_option_name[mouse_scroll_wheel_for_map_zoom]" id="mouse_scroll_wheel_for_map_zoom" value="1" %s> <label for="mouse_scroll_wheel_for_map_zoom">Enable</label><br>
 			<p><small>If NOT checked, zooming on the map using a mouse scroll wheel is disabled.</small></p>',
 			( isset( $this->members_map_configuration_options['mouse_scroll_wheel_for_map_zoom'] ) && $this->members_map_configuration_options['mouse_scroll_wheel_for_map_zoom'] === '1' ) ? 'checked' : ''
+		);
+	}
+
+	public function force_refresh_callback() {
+		$expires = (int) get_option( '_transient_timeout_jr_industria_members_location', 0 );
+		$time_left = $expires - time();
+		if ( $time_left < 0 ) {
+			$hours_remaining = 0;
+		} else {
+			$hours_remaining = $this->fromSeconds($time_left);
+		}
+		printf(
+			'<input type="checkbox" name="members_map_configuration_option_name[force_refresh]" id="force_refresh" value="1" %s> <label for="force_refresh">Enable</label><br>
+			<p><small>This forces a refresh to all users data on next map load. Time left until the update occurs automaticaly:<strong> %s</strong></small></p>',
+			( isset( $this->members_map_configuration_options['force_refresh'] ) && $this->members_map_configuration_options['force_refresh'] === '1' ) ? 'checked' : '',
+			$hours_remaining
 		);
 	}
 }

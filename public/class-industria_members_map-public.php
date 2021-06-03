@@ -138,8 +138,14 @@ class Industria_members_map_Public {
 	 * @return void
 	 */
 	public function industriaMembersMap( $atts ) {
-		$locations = $this->get_locations();
 		$options   = $this->get_options();
+		$force_update = false;
+		if ( isset( $options['force_refresh'] ) ) {
+			$force_update = true;
+			unset($options['force_refresh']);
+			update_option( 'members_map_configuration_option_name', $options );
+		}
+		$locations = $this->get_locations( $force_update );
 		ob_start();
 		include_once 'partials/map-template.php';
 		return ob_get_clean();
@@ -153,11 +159,11 @@ class Industria_members_map_Public {
 	*
 	* @return   string 
 	 */
-	public function get_locations() {
+	public function get_locations( $forceUpdate = false ) {
 
 		$cachedUsers = get_transient( 'jr_industria_members_location' );
 
-		if ( false === $cachedUsers ) {
+		if ( false === $cachedUsers || $forceUpdate ) {
 			$users = get_users();
 			$cachedUsers  = array();
 			$search_value = array(",",".",'"',"'","\\","/","&","[","]","(",")","{","}",":","`","!","@","#","%","=","+");
