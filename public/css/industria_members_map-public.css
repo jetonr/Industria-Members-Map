@@ -1,0 +1,9 @@
+/**
+ * All of the CSS for your public-facing functionality should be
+ * included in this file.
+ */
+
+/* =Responsive Map fix */
+.imm_map_canvas img {
+	max-width: none;
+}
