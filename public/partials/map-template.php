@@ -51,7 +51,7 @@ $map_id = uniqid( 'imm_map_' ); // generate a unique ID for this map
                 marker.addListener("click", () => {
                     infoWindow.close();
                     infoWindow.setContent(
-                        '<h4 style="margin: 0 0 5px 0">'+ marker.getTitle() +' v/o Username</h4>'+
+                        '<h4 style="margin: 0 0 5px 0">'+ marker.getTitle() +' v/o '+ value.nickname +'</h4>'+
                         '<span>Address:</span><br>'+
                         '<span>'+ value.location.address + '</span>'
                     );

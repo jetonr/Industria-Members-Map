@@ -174,6 +174,7 @@ class Industria_members_map_Public {
 					$getLocation = get_user_meta( $user->ID, 'imm_location', true );
 					$cachedUsers[$user->ID]['name'] = $user->first_name;
 					$cachedUsers[$user->ID]['surname'] = $user->last_name;
+					$cachedUsers[$user->ID]['nickname'] = $user->nickname;
 
 					if ( "" == $getLocation || false == $getLocation || empty( $getLocation ) ) {
 
