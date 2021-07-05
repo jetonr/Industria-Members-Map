@@ -237,6 +237,14 @@ class Industria_members_map_Admin {
 			'members-map-configuration-admin', // page
 			'members_map_configuration_setting_section' // section
 		);
+
+		add_settings_field(
+			'members_visibility', // id
+			'Members by status to include in the map', // title
+			array( $this, 'members_visibility_callback' ), // callback
+			'members-map-configuration-admin', // page
+			'members_map_configuration_setting_section' // section
+		);
 	}
 
 	public function members_map_configuration_sanitize($input) {
@@ -271,6 +279,10 @@ class Industria_members_map_Admin {
 
 		if ( isset( $input['force_refresh'] ) ) {
 			$sanitary_values['force_refresh'] = $input['force_refresh'];
+		}
+
+		if ( isset( $input['members_visibility'] ) ) {
+			$sanitary_values['members_visibility'] = $input['members_visibility'];
 		}
 
 		return $sanitary_values;
@@ -356,5 +368,21 @@ class Industria_members_map_Admin {
 			( isset( $this->members_map_configuration_options['force_refresh'] ) && $this->members_map_configuration_options['force_refresh'] === '1' ) ? 'checked' : '',
 			$hours_remaining
 		);
+	}
+
+	public function members_visibility_callback() {
+		printf(
+			'<input type="checkbox" name="members_map_configuration_option_name[members_visibility][verstorben]" id="members_visibility_verstorben" value="1" %s> <label for="members_visibility_verstorben">verstorben</label><br>',
+			( isset( $this->members_map_configuration_options['members_visibility']['verstorben'] ) && $this->members_map_configuration_options['members_visibility']['verstorben'] === '1' ) ? 'checked' : ''
+		);
+		printf(
+			'<input type="checkbox" name="members_map_configuration_option_name[members_visibility][ausgetreten]" id="members_visibility_ausgetreten" value="1" %s> <label for="members_visibility_ausgetreten">ausgetreten</label><br>',
+			( isset( $this->members_map_configuration_options['members_visibility']['ausgetreten'] ) && $this->members_map_configuration_options['members_visibility']['ausgetreten'] === '1' ) ? 'checked' : ''
+		);
+		printf(
+			'<input type="checkbox" name="members_map_configuration_option_name[members_visibility][unbekannt]" id="members_visibility_unbekannt" value="1" %s> <label for="members_visibility_unbekannt">unbekannt</label><br>',
+			( isset( $this->members_map_configuration_options['members_visibility']['unbekannt'] ) && $this->members_map_configuration_options['members_visibility']['unbekannt'] === '1' ) ? 'checked' : ''
+		);
+		print '<p><small>If the user has one of the statuses that is unchecked on the checkboxes above he will NOT be included in the map!</small></p>';
 	}
 }

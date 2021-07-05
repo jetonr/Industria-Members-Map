@@ -145,7 +145,7 @@ class Industria_members_map_Public {
 			unset($options['force_refresh']);
 			update_option( 'members_map_configuration_option_name', $options );
 		}
-		$locations = $this->get_locations( $force_update );
+		$locations = $this->get_locations( $options, true );
 		ob_start();
 		include_once 'partials/map-template.php';
 		return ob_get_clean();
@@ -159,7 +159,7 @@ class Industria_members_map_Public {
 	*
 	* @return   string 
 	 */
-	public function get_locations( $forceUpdate = false ) {
+	public function get_locations( $options, $forceUpdate = false ) {
 
 		$cachedUsers = get_transient( 'jr_industria_members_location' );
 
@@ -167,8 +167,12 @@ class Industria_members_map_Public {
 			$users = get_users();
 			$cachedUsers  = array();
 			$search_value = array(",",".",'"',"'","\\","/","&","[","]","(",")","{","}",":","`","!","@","#","%","=","+");
-			
-			foreach ($users as $key => $user) {
+
+			foreach ( $users as $key => $user ) {
+
+				if ( false == $this->include_member_status( $options, $user,'verstorben' ) ) { continue; }
+				if ( false == $this->include_member_status( $options, $user,'ausgetreten' ) ) { continue; }
+				if ( false == $this->include_member_status( $options, $user,'unbekannt' ) ) { continue; }
 
 				$str = str_replace( $search_value,"", get_cimyFieldValue($user->ID,'STRASSE') ); 
 				$plz = str_replace( $search_value,"", get_cimyFieldValue($user->ID,'PLZ') );
@@ -211,6 +215,25 @@ class Industria_members_map_Public {
 		}
 
 		return json_encode($cachedUsers);
+	}
+
+	public function include_member_status( $options, $user, $status ) {
+
+		$$status   = get_field('user_'.$status.'_raf','user_'.$user->ID);
+	
+		$include = true;
+		
+		// Status Check
+		if ( !isset( $options['members_visibility'][$status] ) ) {
+			switch ($status) {
+				case $status:
+					$include = $$status ? false : true;
+					break;
+			}
+		} else {
+				$include = true;
+		}
+		return $include;
 	}
 
 	/**
