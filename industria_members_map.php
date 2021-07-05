@@ -16,7 +16,7 @@
  * Plugin Name:       Industria Members Map
  * Plugin URI:        www.industria.ch
  * Description:       This plugin adds a short code which displays all Industria Members in a google map.
- * Version:           1.0.1
+ * Version:           1.0.2
  * Author:            Jeton Ramadani
  * Author URI:        www.jrwebstudio.com
  * License:           GPL-2.0+
@@ -35,7 +35,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'INDUSTRIA_MEMBERS_MAP_VERSION', '1.0.0' );
+define( 'INDUSTRIA_MEMBERS_MAP_VERSION', '1.0.2' );
 define( 'INDUSTRIA_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 /**
